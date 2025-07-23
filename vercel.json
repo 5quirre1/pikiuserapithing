@@ -1,0 +1,16 @@
+{
+  "rewrites": [
+    {
+      "source": "/banner/:username",
+      "destination": "/api/[username].js"
+    },
+    {
+      "source": "/pfp/:username",
+      "destination": "/api/[username].js"
+    },
+    {
+      "source": "/",
+      "destination": "/api/[username].js"
+    }
+  ]
+}
