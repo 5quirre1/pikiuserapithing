@@ -11,6 +11,10 @@
     {
       "source": "/",
       "destination": "/api/[username].js"
+    },
+    {
+      "source": "/background/:username",
+      "destination": "/api/[username].js"
     }
   ]
 }
