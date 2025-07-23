@@ -46,9 +46,15 @@ export default async function handler(req, res) {
     if (pfpMatch) {
       username = pfpMatch[1].replace(/\.[^.]*$/, '');
     }
+  } else if (rawPath.includes('/background/')) {
+    imageType = 'background';
+    const match = rawPath.match(/\/background\/([^\/]+)/);
+    if (match) {
+      username = match[1].replace(/\.[^.]*$/, '');
+    }
   } else if (rawPath === '/' || rawPath === '') {
         res.setHeader('Content-Type', 'text/plain');
-        res.status(400).send('this is a really simple api that returns a users banner or profile easily!!!\n\nfor banner:\n\tbanner/username\nfor pfp:\n\tpfp/username');
+        res.status(400).send('this is a really simple api that returns a users banner or profile easily!!!\n\nfor banner:\n\tbanner/username\nfor pfp:\n\tpfp/username\nfor background:\n\t/background/username');
         return;
   } else {
         res.setHeader('Content-Type', 'text/plain');
@@ -68,7 +74,7 @@ export default async function handler(req, res) {
       return;
     }
     let imageUrl = null;
-    if (imageType === 'banner') {gi
+    if (imageType === 'banner') {
       if (!data.banner || !data.banner.startsWith('http')) {
         res.status(404).json({ error: 'banner not found for this user (or user doesn\'t exist)' });
         return;
@@ -80,6 +86,23 @@ export default async function handler(req, res) {
         return;
       }
       imageUrl = data.pfp;
+    } else if (imageType === 'background') {
+      const bg = data.background;
+      if (!bg) {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(200).send('none');
+        return;
+      }
+      if (bg.startsWith('#')) {
+        res.setHeader('Content-Type', 'text/plain');
+        res.status(200).send(bg);
+        return;
+      }
+      if (!bg.startsWith('http')) {
+        res.status(404).json({ error: 'invalid background format' });
+        return;
+      }
+      imageUrl = bg;
     }
     const imgRes = await fetch(imageUrl);
     if (!imgRes.ok) {
